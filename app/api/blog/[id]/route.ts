@@ -1,0 +1,34 @@
+import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/mongodb";
+import Blog from "@/models/Blog";
+
+// ✏️ UPDATE BLOG
+export async function PUT(req: Request, { params }: any) {
+  try {
+    await connectDB();
+    const body = await req.json();
+
+    const updated = await Blog.findByIdAndUpdate(
+      params.id,
+      body,
+      { new: true }
+    );
+
+    return NextResponse.json({ success: true, data: updated });
+  } catch (err: any) {
+    return NextResponse.json({ success: false, error: err.message });
+  }
+}
+
+// 🗑️ DELETE BLOG
+export async function DELETE(req: Request, { params }: any) {
+  try {
+    await connectDB();
+
+    await Blog.findByIdAndDelete(params.id);
+
+    return NextResponse.json({ success: true });
+  } catch (err: any) {
+    return NextResponse.json({ success: false, error: err.message });
+  }
+}

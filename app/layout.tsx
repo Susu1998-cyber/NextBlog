@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
+import { Toaster } from "@/components/ui/sonner";
+import LayoutWrapper from "@/components/LayoutWrapper";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({
@@ -31,9 +31,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navigation />
-          {children}
-          <Footer />
+          <LayoutWrapper>
+            <Toaster richColors position="top-right" />
+            {children}
+          </LayoutWrapper>
         </ThemeProvider>
       </body>
     </html>

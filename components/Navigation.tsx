@@ -2,6 +2,7 @@ import { navItems } from "@/lib/constants";
 import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
 import MobileNavigtaion from "./MobileNavigation";
+import LogoutButton from "./logoutbutton";
 
 export default function Navigation() {
   return (
@@ -11,7 +12,7 @@ export default function Navigation() {
           {/* Logo */}
           <div className="flex-shrink-0">
             <h1 className="text-xl font-serif font-bold text-foreground">
-              Resonance
+          Nexora
             </h1>
           </div>
 
@@ -28,6 +29,7 @@ export default function Navigation() {
             ))}
 
             <ThemeToggle />
+            <LogoutButton />
           </div>
 
           {/* Mobile nav */}
