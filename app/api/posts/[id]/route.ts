@@ -9,22 +9,17 @@
 
 //   return NextResponse.json(post);
 // }
-
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Blog from "@/models/Blog";
 
-type Params = {
-  params: {
-    id: string;
-  };
-};
-
-export async function GET(req: Request, { params }: Params) {
+export async function GET(req: NextRequest, context: any) {
   try {
     await connectDB();
 
-    const post = await Blog.findById(params.id);
+    const { id } = context.params as { id: string };
+
+    const post = await Blog.findById(id);
 
     if (!post) {
       return NextResponse.json(
@@ -38,7 +33,7 @@ export async function GET(req: Request, { params }: Params) {
       data: post,
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Internal server error";
 
