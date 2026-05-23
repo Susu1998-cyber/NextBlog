@@ -66,13 +66,11 @@ async function getPost(id: string): Promise<Post | null> {
   return data;
 }
 
-type PageProps = {
-  params: {
-    id: string;
-  };
-};
-
-export default async function BlogDetail({ params }: PageProps) {
+export default async function BlogDetail({
+  params,
+}: {
+  params: { id: string };
+}) {
   const post = await getPost(params.id);
 
   if (!post) {
