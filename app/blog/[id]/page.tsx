@@ -1,41 +1,106 @@
+// import Image from "next/image";
+
+// async function getPost(id: string) {
+//     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${id}`, {
+//         cache: "no-store",
+//     });
+
+//     const data = await res.json();
+//     return data;
+// }
+
+// export default async function BlogDetail({ params }: any) {
+//     const post = await getPost(params.id);
+
+//     if (!post) return <p className="p-10 text-center">Post not found</p>;
+
+//     return (
+//         <div className="max-w-4xl mx-auto px-4 py-16">
+//             <h1 className="text-3xl md:text-5xl font-bold mb-6">
+//                 {post.title}
+//             </h1>
+
+//             <div className="text-sm text-gray-500 mb-6">
+//                 {post.category} • {post.date}
+//             </div>
+
+//             <div className="relative w-full h-[400px] mb-8">
+//                 <Image
+//                     src={post.image}
+//                     alt={post.title}
+//                     fill
+//                     className="object-cover rounded-xl"
+//                 />
+//             </div>
+
+//             <p className="text-lg leading-8 text-gray-700 whitespace-pre-line">
+//                 {post.description}
+//             </p>
+//         </div>
+//     );
+// }
+
+
 import Image from "next/image";
 
-async function getPost(id: string) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${id}`, {
-        cache: "no-store",
-    });
+type Post = {
+  _id: string;
+  title: string;
+  description: string;
+  image: string;
+  category: string;
+  date: string;
+};
 
-    const data = await res.json();
-    return data;
+async function getPost(id: string): Promise<Post | null> {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${id}`,
+    {
+      cache: "no-store",
+    }
+  );
+
+  if (!res.ok) return null;
+
+  const data = await res.json();
+  return data;
 }
 
-export default async function BlogDetail({ params }: any) {
-    const post = await getPost(params.id);
+type PageProps = {
+  params: {
+    id: string;
+  };
+};
 
-    if (!post) return <p className="p-10 text-center">Post not found</p>;
+export default async function BlogDetail({ params }: PageProps) {
+  const post = await getPost(params.id);
 
-    return (
-        <div className="max-w-4xl mx-auto px-4 py-16">
-            <h1 className="text-3xl md:text-5xl font-bold mb-6">
-                {post.title}
-            </h1>
+  if (!post) {
+    return <p className="p-10 text-center">Post not found</p>;
+  }
 
-            <div className="text-sm text-gray-500 mb-6">
-                {post.category} • {post.date}
-            </div>
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-16">
+      <h1 className="text-3xl md:text-5xl font-bold mb-6">
+        {post.title}
+      </h1>
 
-            <div className="relative w-full h-[400px] mb-8">
-                <Image
-                    src={post.image}
-                    alt={post.title}
-                    fill
-                    className="object-cover rounded-xl"
-                />
-            </div>
+      <div className="text-sm text-gray-500 mb-6">
+        {post.category} • {post.date}
+      </div>
 
-            <p className="text-lg leading-8 text-gray-700 whitespace-pre-line">
-                {post.description}
-            </p>
-        </div>
-    );
+      <div className="relative w-full h-[400px] mb-8">
+        <Image
+          src={post.image || "/placeholder.jpg"}
+          alt={post.title}
+          fill
+          className="object-cover rounded-xl"
+        />
+      </div>
+
+      <p className="text-lg leading-8 text-gray-700 whitespace-pre-line">
+        {post.description}
+      </p>
+    </div>
+  );
 }
