@@ -37,15 +37,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Blog from "@/models/Blog";
 
-// ✅ Define params type
-type Params = {
-  params: {
-    id: string;
-  };
-};
-
 // ✏️ UPDATE BLOG
-export async function PUT(req: NextRequest, { params }: Params) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     await connectDB();
     const body = await req.json();
@@ -57,7 +53,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
     );
 
     return NextResponse.json({ success: true, data: updated });
-  } catch (err) {
+  } catch (err: unknown) {
     const errorMessage =
       err instanceof Error ? err.message : "Internal server error";
 
@@ -66,14 +62,17 @@ export async function PUT(req: NextRequest, { params }: Params) {
 }
 
 // 🗑️ DELETE BLOG
-export async function DELETE(req: NextRequest, { params }: Params) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     await connectDB();
 
     await Blog.findByIdAndDelete(params.id);
 
     return NextResponse.json({ success: true });
-  } catch (err) {
+  } catch (err: unknown) {
     const errorMessage =
       err instanceof Error ? err.message : "Internal server error";
 
