@@ -46,7 +46,7 @@ export default function Footer() {
       } else {
         setMessage(data.error || "Something went wrong");
       }
-    } catch (error) {
+    } catch (error: unknown) {
       setMessage("Failed to subscribe ❌");
     }
 

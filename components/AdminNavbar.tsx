@@ -15,7 +15,7 @@ export default function AdminNavbar() {
       toast.success("Logged out successfully 👋");
 
       router.replace("/login");
-    } catch (err) {
+    } catch (err: unknown)  {
       toast.error("Logout failed ❌");
     }
   };

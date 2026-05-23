@@ -5,7 +5,17 @@ import * as motion from "motion/react-client";
 import { categories } from "@/lib/data";
 import { Badge } from "./ui/badge";
 
-export default function CategoriesSection({ onSelectCategory }: any) {
+
+type CategoryApiItem = {
+  _id: string;
+  count: number;
+};
+
+export default function CategoriesSection({
+  onSelectCategory,
+}: {
+  onSelectCategory: (category: string | null) => void;
+}) {
   const [categoriesData, setCategoriesData] = useState(categories);
 
   useEffect(() => {
@@ -19,7 +29,7 @@ export default function CategoriesSection({ onSelectCategory }: any) {
 
           if (cat.name === "All") {
             const total = data.reduce(
-              (sum: number, item: any) => sum + item.count,
+              (sum: number, item: CategoryApiItem) => sum + item.count,
               0
             );
 
@@ -29,7 +39,7 @@ export default function CategoriesSection({ onSelectCategory }: any) {
             };
           }
 
-          const found = data.find((item: any) => item._id === cat.name);
+          const found = data.find((item: CategoryApiItem) => item._id === cat.name);
 
           return {
             ...cat,
