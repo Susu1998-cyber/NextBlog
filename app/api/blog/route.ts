@@ -1,15 +1,104 @@
-import { NextResponse } from "next/server";
+// import { NextResponse } from "next/server";
+// import { connectDB } from "@/lib/mongodb";
+// import Blog from "@/models/Blog";
+// import Subscriber from "@/models/Subscriber";
+// import { sendNewBlogEmail } from "@/lib/sendEmail";
+
+// // ✅ CREATE BLOG
+// export async function POST(req: Request) {
+//   try {
+//     await connectDB();
+
+//     const body = await req.json();
+//     const { title, description, category, image } = body;
+
+//     if (!title || !description || !category) {
+//       return NextResponse.json(
+//         { success: false, error: "All fields required" },
+//         { status: 400 }
+//       );
+//     }
+
+//     // ✅ Create Blog
+//     const blog = await Blog.create({
+//       title,
+//       description,
+//       category,
+//       image,
+//     });
+
+//     // 🔥 SEND EMAILS (non-blocking)
+//     setTimeout(async () => {
+//       try {
+//         const subscribers = await Subscriber.find({ status: "active" });
+
+//         console.log(`📧 Sending emails to ${subscribers.length} subscribers`);
+
+//         await Promise.all(
+//           subscribers.map((sub) =>
+//             sendNewBlogEmail(sub.email, blog)
+//           )
+//         );
+
+//         console.log("✅ Emails sent successfully");
+//       } catch (err) {
+//         console.error("❌ Email sending failed:", err);
+//       }
+//     }, 0);
+
+//     return NextResponse.json({
+//       success: true,
+//       data: blog,
+//     });
+
+//   } catch (error: any) {
+//     return NextResponse.json(
+//       { success: false, error: error.message },
+//       { status: 500 }
+//     );
+//   }
+// }
+
+// // ✅ GET ALL BLOGS
+// export async function GET() {
+//   try {
+//     await connectDB();
+
+//     const blogs = await Blog.find().sort({ createdAt: -1 });
+
+//     return NextResponse.json({
+//       success: true,
+//       data: blogs,
+//     });
+
+//   } catch (error: any) {
+//     return NextResponse.json(
+//       { success: false, error: error.message },
+//       { status: 500 }
+//     );
+//   }
+// }
+
+import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Blog from "@/models/Blog";
 import Subscriber from "@/models/Subscriber";
 import { sendNewBlogEmail } from "@/lib/sendEmail";
 
+// ✅ Define request body type
+type BlogRequest = {
+  title: string;
+  description: string;
+  category: string;
+  image?: string;
+};
+
 // ✅ CREATE BLOG
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     await connectDB();
 
-    const body = await req.json();
+    const body: BlogRequest = await req.json();
     const { title, description, category, image } = body;
 
     if (!title || !description || !category) {
@@ -35,7 +124,7 @@ export async function POST(req: Request) {
         console.log(`📧 Sending emails to ${subscribers.length} subscribers`);
 
         await Promise.all(
-          subscribers.map((sub) =>
+          subscribers.map((sub: { email: string }) =>
             sendNewBlogEmail(sub.email, blog)
           )
         );
@@ -51,9 +140,12 @@ export async function POST(req: Request) {
       data: blog,
     });
 
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error";
+
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }
@@ -71,9 +163,12 @@ export async function GET() {
       data: blogs,
     });
 
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Internal server error";
+
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: errorMessage },
       { status: 500 }
     );
   }
