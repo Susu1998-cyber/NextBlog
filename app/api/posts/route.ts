@@ -23,12 +23,20 @@
 //     return NextResponse.json({ error: error.message }, { status: 500 });
 //   }
 // }
-
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Blog from "@/models/Blog";
+import { Types } from "mongoose";
 
-// ✅ Define response type
+type BlogDocument = {
+  _id: Types.ObjectId;
+  title: string;
+  description: string;
+  category: string;
+  image?: string;
+  createdAt?: Date;
+};
+
 type BlogResponse = {
   id: string;
   title: string;
@@ -45,7 +53,7 @@ export async function GET() {
 
     const blogs = await Blog.find().sort({ createdAt: -1 });
 
-    const posts: BlogResponse[] = blogs.map((blog: any) => ({
+    const posts: BlogResponse[] = blogs.map((blog: BlogDocument) => ({
       id: blog._id.toString(),
       title: blog.title,
       excerpt: blog.description,

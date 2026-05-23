@@ -1,5 +1,12 @@
 // import { NextResponse } from "next/server";
-// import { jwtVerify } from "jose";
+
+// function parseJwt(token) {
+//   try {
+//     return JSON.parse(atob(token.split(".")[1]));
+//   } catch {
+//     return null;
+//   }
+// }
 
 // export async function middleware(req) {
 //   const token = req.cookies.get("token")?.value;
@@ -7,56 +14,48 @@
 
 //   const publicRoutes = ["/login", "/signup"];
 
-//     if (
-//     pathname.startsWith("/_next") ||   // 🔥 FIX
+//   if (
+//     pathname.startsWith("/_next") ||
 //     pathname.startsWith("/api") ||
 //     pathname.startsWith("/favicon.ico")
 //   ) {
 //     return NextResponse.next();
 //   }
 
-//   // ✅ Allow API routes
-//   if (pathname.startsWith("/api")) {
-//     return NextResponse.next();
-//   }
-
-//   // ✅ Allow public routes
 //   if (publicRoutes.includes(pathname)) {
 //     return NextResponse.next();
 //   }
 
-//   // ❌ No token → redirect
 //   if (!token) {
 //     return NextResponse.redirect(new URL("/login", req.url));
 //   }
 
-//   const url = req.nextUrl.clone();
+//   const decoded = parseJwt(token);
 
-//   try {
-//     const { payload } = await jwtVerify(
-//       token,
-//       new TextEncoder().encode(process.env.JWT_SECRET),
-//     );
-
-//     if (pathname === "/" && payload.role === "admin") {
-//       url.pathname = "/admin";
-//       return NextResponse.redirect(url);
-//     }
-
-//     if (pathname.startsWith("/admin") && payload.role !== "admin") {
-//       url.pathname = "/";
-//       return NextResponse.redirect(url);
-//     }
-//   } catch {
+//   if (!decoded) {
 //     return NextResponse.redirect(new URL("/login", req.url));
+//   }
+
+//   if (pathname === "/" && decoded.role === "admin") {
+//     return NextResponse.redirect(new URL("/admin", req.url));
+//   }
+
+//   if (pathname.startsWith("/admin") && decoded.role !== "admin") {
+//     return NextResponse.redirect(new URL("/", req.url));
 //   }
 
 //   return NextResponse.next();
 // }
 
-import { NextResponse } from "next/server";
 
-function parseJwt(token) {
+import { NextRequest, NextResponse } from "next/server";
+
+type JwtPayload = {
+  role: string;
+  [key: string]: unknown;
+};
+
+function parseJwt(token: string): JwtPayload | null {
   try {
     return JSON.parse(atob(token.split(".")[1]));
   } catch {
@@ -64,7 +63,7 @@ function parseJwt(token) {
   }
 }
 
-export async function middleware(req) {
+export async function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
   const { pathname } = req.nextUrl;
 

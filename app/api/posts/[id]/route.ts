@@ -9,15 +9,20 @@
 
 //   return NextResponse.json(post);
 // }
+
 import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Blog from "@/models/Blog";
 
-export async function GET(req: NextRequest, context: any) {
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
+
+export async function GET(req: NextRequest, context: RouteContext) {
   try {
     await connectDB();
 
-    const { id } = context.params as { id: string };
+    const { id } = await context.params;
 
     const post = await Blog.findById(id);
 

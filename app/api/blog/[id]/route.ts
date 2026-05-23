@@ -36,19 +36,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
 import Blog from "@/models/Blog";
 
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
+
 // ✏️ UPDATE BLOG
-export async function PUT(req: NextRequest, context: any) {
+export async function PUT(req: NextRequest, context: RouteContext) {
   try {
     await connectDB();
     const body = await req.json();
 
-    const { id } = context.params;
+    const { id } = await context.params;
 
-    const updated = await Blog.findByIdAndUpdate(
-      id,
-      body,
-      { new: true }
-    );
+    const updated = await Blog.findByIdAndUpdate(id, body, { new: true });
 
     return NextResponse.json({ success: true, data: updated });
 
@@ -61,11 +61,11 @@ export async function PUT(req: NextRequest, context: any) {
 }
 
 // 🗑️ DELETE BLOG
-export async function DELETE(req: NextRequest, context: any) {
+export async function DELETE(req: NextRequest, context: RouteContext) {
   try {
     await connectDB();
 
-    const { id } = context.params;
+    const { id } = await context.params;
 
     await Blog.findByIdAndDelete(id);
 
