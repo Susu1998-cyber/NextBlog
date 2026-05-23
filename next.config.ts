@@ -1,7 +1,8 @@
+ 
+
 // import type { NextConfig } from "next";
 
 // const nextConfig: NextConfig = {
-//   /* config options here */
 //   images: {
 //     remotePatterns: [
 //       {
@@ -10,13 +11,18 @@
 //       },
 //     ],
 //   },
+
+//   // 🔥 ADD THIS
+//   eslint: {
+//     ignoreDuringBuilds: true,
+//   },
 // };
 
 // export default nextConfig;
 
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -26,10 +32,9 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // 🔥 ADD THIS
   eslint: {
     ignoreDuringBuilds: true,
   },
-};
+} satisfies Record<string, unknown>;
 
 export default nextConfig;
