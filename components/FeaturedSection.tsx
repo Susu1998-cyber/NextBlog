@@ -158,7 +158,7 @@ export default function FeaturedSection({ selectedCategory }: { selectedCategory
   }, []);
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="featured" className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -196,7 +196,7 @@ export default function FeaturedSection({ selectedCategory }: { selectedCategory
                       <div className="w-full h-48 relative">
                         <Image
                           fill
-                          src={post.image || "/placeholder.jpg"}
+                          src={post.image || "/images/placeholder.jpg"}
                           alt={post.title}
                           className="object-cover transition-transform duration-300 group-hover:scale-105"
                         />

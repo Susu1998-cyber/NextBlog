@@ -31,8 +31,11 @@ export default function HeroSection() {
           </p>
 
           <Button size="lg" className="group">
-            Explore Blogs
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            <a href="#featured" className="flex items-center">
+              Explore Blogs
+              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </a>
+
           </Button>
         </motion.div>
 
@@ -43,12 +46,9 @@ export default function HeroSection() {
           transition={{ duration: 0.7, delay: 0.2 }}
           className="w-full"
         >
-
-          <Image
+          <img
             src="/images/AIblog.png"
             alt="AI Technology"
-            width={700}
-            height={450}
             className="rounded-2xl shadow-xl w-full h-[400px] object-cover"
           />
         </motion.div>

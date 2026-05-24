@@ -33,9 +33,20 @@ export async function GET(req: NextRequest, context: RouteContext) {
       );
     }
 
+        const formattedPost = {
+      id: post._id.toString(), // ✅ use id consistently
+      title: post.title,
+      description: post.description,
+      category: post.category,
+      image: post.image,
+      date: post.createdAt
+        ? new Date(post.createdAt).toDateString()
+        : "",
+    };
+
     return NextResponse.json({
       success: true,
-      data: post,
+       data: formattedPost,
     });
 
   } catch (error: unknown) {

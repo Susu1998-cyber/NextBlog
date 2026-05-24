@@ -1,18 +1,43 @@
+
+
+
+
 // import Image from "next/image";
 
-// async function getPost(id: string) {
-//     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${id}`, {
-//         cache: "no-store",
-//     });
+// type Post = {
+//     _id: string;
+//     title: string;
+//     description: string;
+//     image: string;
+//     category: string;
+//     date: string;
+// };
+
+// async function getPost(id: string): Promise<Post | null> {
+//     const res = await fetch(
+//         `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${id}`,
+//         {
+//             cache: "no-store",
+//         }
+//     );
+
+//     if (!res.ok) return null;
 
 //     const data = await res.json();
 //     return data;
 // }
 
-// export default async function BlogDetail({ params }: any) {
-//     const post = await getPost(params.id);
+// export default async function BlogDetail({
+//     params,
+// }: {
+//     params: Promise<{ id: string }>;
+// }) {
+//     const { id } = await params;
+//     const post = await getPost(id);
 
-//     if (!post) return <p className="p-10 text-center">Post not found</p>;
+//     if (!post) {
+//         return <p className="p-10 text-center">Post not found</p>;
+//     }
 
 //     return (
 //         <div className="max-w-4xl mx-auto px-4 py-16">
@@ -26,7 +51,7 @@
 
 //             <div className="relative w-full h-[400px] mb-8">
 //                 <Image
-//                     src={post.image}
+//                     src={post.image || "/placeholder.jpg"}
 //                     alt={post.title}
 //                     fill
 //                     className="object-cover rounded-xl"
@@ -41,10 +66,8 @@
 // }
 
 
-import Image from "next/image";
-
 type Post = {
-    _id: string;
+    id: string; // ✅ NOT _id anymore
     title: string;
     description: string;
     image: string;
@@ -53,17 +76,21 @@ type Post = {
 };
 
 async function getPost(id: string): Promise<Post | null> {
-    const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${id}`,
-        {
-            cache: "no-store",
-        }
-    );
+    try {
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${id}`,
+            { cache: "no-store" }
+        );
 
-    if (!res.ok) return null;
+        if (!res.ok) return null;
 
-    const data = await res.json();
-    return data;
+        const json = await res.json();
+
+        return json.data; // ✅ IMPORTANT
+    } catch (error) {
+        console.error("Error fetching post:", error);
+        return null;
+    }
 }
 
 export default async function BlogDetail({
@@ -72,11 +99,20 @@ export default async function BlogDetail({
     params: Promise<{ id: string }>;
 }) {
     const { id } = await params;
+
     const post = await getPost(id);
 
     if (!post) {
         return <p className="p-10 text-center">Post not found</p>;
     }
+
+    const isBase64 = post.image?.startsWith("data:image");
+    const isExternal = post.image?.startsWith("http");
+
+    const imageSrc =
+        isBase64 || isExternal
+            ? post.image
+            : "/placeholder.jpg";
 
     return (
         <div className="max-w-4xl mx-auto px-4 py-16">
@@ -88,12 +124,11 @@ export default async function BlogDetail({
                 {post.category} • {post.date}
             </div>
 
-            <div className="relative w-full h-[400px] mb-8">
-                <Image
-                    src={post.image || "/placeholder.jpg"}
-                    alt={post.title}
-                    fill
-                    className="object-cover rounded-xl"
+            <div className="w-full mb-8">
+                <img
+                    src={imageSrc}
+                    alt={post.title || "Blog image"}
+                    className="w-full h-[400px] object-cover rounded-xl"
                 />
             </div>
 
