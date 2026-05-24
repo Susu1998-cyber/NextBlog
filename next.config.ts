@@ -31,10 +31,9 @@ const nextConfig = {
       },
     ],
   },
-
   eslint: {
     ignoreDuringBuilds: true,
   },
-} satisfies Record<string, unknown>;
+} as unknown as NextConfig;
 
 export default nextConfig;
